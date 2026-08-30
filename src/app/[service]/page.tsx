@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+import { ArrowUpRight, Check } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { SiteShell } from "@/components/layout/site-shell";
+import { PageIntro } from "@/components/ui/page-intro";
+import { Reveal } from "@/components/ui/reveal";
+import { services } from "@/config/site";
+type Params = { service: string };
+export function generateStaticParams() { return services.filter((service) => !["social-media-management", "digital-marketing"].includes(service.slug)).map((service) => ({ service: service.slug })); }
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> { const { service: slug } = await params; const service = services.find((entry) => entry.slug === slug); return { title: service?.title ?? "Service", description: service?.description }; }
+export default async function GenericServicePage({ params }: { params: Promise<Params> }) { const { service: slug } = await params; const service = services.find((entry) => entry.slug === slug); if (!service) notFound(); const Icon = service.icon; return <SiteShell><PageIntro eyebrow={service.label} title={service.title} description={service.description} /><section className="px-5 py-20 sm:px-8 lg:px-12 lg:py-28"><div className="mx-auto grid max-w-[1440px] gap-12 lg:grid-cols-[.75fr_1.25fr]"><Reveal><Icon size={24} strokeWidth={1.4} className="text-[#ca5b43]" /><h2 className="display mt-8 max-w-md text-5xl leading-[.95]">Support built for the next practical step.</h2></Reveal><Reveal delay={.08}><p className="eyebrow text-[#ca5b43]">What&apos;s included</p><ul className="mt-6 border-t border-[#d9d8d0]">{service.deliverables.map((deliverable) => <li key={deliverable} className="flex gap-3 border-b border-[#d9d8d0] py-5 text-base text-[#59645d]"><Check size={17} className="shrink-0 text-[#ca5b43]" />{deliverable}</li>)}</ul><p className="mt-8 max-w-xl text-lg leading-8 text-[#68716b]">The exact scope is shaped around your business, current visibility, and the work most likely to create useful momentum. Start with a conversation to define the right next step.</p><Link href="/contact" className="mt-8 inline-flex items-center gap-2 bg-[#18211d] px-5 py-3.5 text-sm font-bold text-white hover:bg-[#ca5b43]">Discuss this service <ArrowUpRight size={16} /></Link></Reveal></div></section></SiteShell>; }
