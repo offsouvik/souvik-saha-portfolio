@@ -11,6 +11,21 @@ export const metadata: Metadata = {
   openGraph: { type: "website", locale: "en_US", url: "/", title: `${siteConfig.name} | Digital Development & Growth`, description: siteConfig.description, siteName: siteConfig.name },
   robots: { index: true, follow: true },
 };
-export const viewport: Viewport = { themeColor: "#f7f6f1", colorScheme: "light dark" };
+export const viewport: Viewport = { themeColor: "#000000", colorScheme: "dark light" };
 const themeScript = `try { document.documentElement.dataset.theme = localStorage.getItem('souvik-theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }`;
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="en" suppressHydrationWarning><body><script dangerouslySetInnerHTML={{ __html: themeScript }} /><ThemeProvider>{children}</ThemeProvider></body></html>; }
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+      </head>
+      <body>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
+  );
+}

@@ -1,2 +1,5 @@
-import { HomeExperience } from "@/components/home/home-experience";
-export default function HomePage() { return <HomeExperience />; }
+import { DesignWorldHero } from "@/components/home/design-world-hero";
+
+export default function HomePage() {
+  return <DesignWorldHero />;
+}
