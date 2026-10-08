@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import { ChevronDown } from "lucide-react";
 
 const MODEL_URL = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260929_212926_92423081-b0e4-4f5a-b650-14af6c05c058.glb";
 
@@ -58,7 +60,7 @@ export function DesignWorldHero() {
 
       const mobile = W < 768 || W / H < 1;
       let fs = Math.min(H * 0.21, W * (mobile ? 0.21 : 0.118));
-      bgCtx.font = `800 ${fs}px Poppins`;
+      bgCtx.font = `800 ${fs}px Poppins, sans-serif`;
 
       const lines = ["Explore", "New", "Ideas"];
       let maxLineWidth = 0;
@@ -70,7 +72,7 @@ export function DesignWorldHero() {
       const maxAllowedWidth = W * (mobile ? 0.9 : 0.5);
       if (maxLineWidth > maxAllowedWidth && maxLineWidth > 0) {
         fs = fs * (maxAllowedWidth / maxLineWidth);
-        bgCtx.font = `800 ${fs}px Poppins`;
+        bgCtx.font = `800 ${fs}px Poppins, sans-serif`;
       }
 
       bgCtx.fillStyle = "#e9e9e9";
@@ -202,7 +204,7 @@ export function DesignWorldHero() {
           float r = texR.x * 0.5;
           float y = (texY.x * 2.0 + texY.y * 2.0 - texY.z) / 6.0;
           float g = texG.y * 0.5;
-          float c = (texC.y * 2.0 + texC.z * 2.0 - texC.x) / 6.0;
+          float c = (texC.y * 2.0 + texC.z * 2.0 - texC.r) / 6.0;
           float b = texB.z * 0.5;
           float p = (texP.z * 2.0 + texP.x * 2.0 - texP.y) / 6.0;
 
@@ -566,272 +568,26 @@ export function DesignWorldHero() {
     };
   }, []);
 
-  return (
-    <section className="dw-hero relative w-full h-[100vh] h-[100svh] min-h-[520px] overflow-hidden bg-black text-white select-none">
-      <style jsx global>{`
-        :root {
-          --pad-x: clamp(20px, 6.95vw, 120px);
-        }
-        .dw-hero {
-          font-family: 'Poppins', sans-serif;
-          -webkit-font-smoothing: antialiased;
-        }
-        .dw-scene {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          display: block;
-          cursor: grab;
-          touch-action: none;
-        }
-        .dw-scene.dragging {
-          cursor: grabbing;
-        }
-        .dw-ui {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 2;
-        }
-        .dw-ui a, .dw-ui button {
-          pointer-events: auto;
-        }
-        .dw-sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          overflow: hidden;
-          clip: rect(0 0 0 0);
-          white-space: nowrap;
-        }
-        .dw-nav {
-          position: absolute;
-          top: clamp(24px, 4.7vh, 40px);
-          left: var(--pad-x);
-          right: var(--pad-x);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .dw-logo {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #fff;
-          text-decoration: none;
-          font-size: 15px;
-          letter-spacing: -0.01em;
-        }
-        .dw-logo-mark {
-          width: 20px;
-          height: 40px;
-          background: #fff;
-          border-radius: 0 20px 20px 0;
-          display: inline-block;
-        }
-        .dw-logo b { font-weight: 700; }
-        .dw-logo span { font-weight: 400; }
-        .dw-nav-links {
-          display: flex;
-          gap: clamp(20px, 4.1vw, 60px);
-          list-style: none;
-        }
-        .dw-nav-links a {
-          color: #fff;
-          text-decoration: none;
-          font-size: 15px;
-          font-weight: 500;
-          position: relative;
-          cursor: pointer;
-        }
-        .dw-nav-links a::after {
-          content: '';
-          position: absolute;
-          left: 0;
-          right: 0;
-          bottom: -4px;
-          height: 1px;
-          background: currentColor;
-          transform: scaleX(0);
-          transform-origin: right;
-          transition: transform .35s ease;
-        }
-        .dw-nav-links a:hover::after {
-          transform: scaleX(1);
-          transform-origin: left;
-        }
-        .dw-arrows {
-          position: absolute;
-          top: 18.9%;
-          left: 76.7%;
-          display: flex;
-          gap: 32px;
-          transform: translate(-19px, -50%);
-        }
-        .dw-arrow {
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          border: 2.5px solid #fff;
-          background: transparent;
-          color: #fff;
-          display: grid;
-          place-items: center;
-          cursor: pointer;
-          transition: background .25s, color .25s;
-          padding: 0;
-          outline: none;
-        }
-        .dw-arrow svg {
-          width: 18px;
-          height: 18px;
-          display: block;
-        }
-        .dw-arrow:hover {
-          background: #fff;
-          color: #000;
-        }
-        .dw-dots {
-          position: absolute;
-          right: calc(var(--pad-x) - 7px);
-          top: 49.4%;
-          transform: translateY(-50%);
-          display: flex;
-          flex-direction: column;
-          gap: 33px;
-        }
-        .dw-dot {
-          width: 14px;
-          height: 14px;
-          border-radius: 50%;
-          border: 2px solid #fff;
-          background: #fff;
-          cursor: pointer;
-          transition: background .25s;
-          padding: 0;
-          outline: none;
-        }
-        .dw-dot.active {
-          background: transparent;
-        }
-        .dw-tagline {
-          position: absolute;
-          left: var(--pad-x);
-          bottom: clamp(40px, 7.5vh, 70px);
-          font-size: clamp(24px, 2.65vw, 44px);
-          line-height: 1.2;
-          font-weight: 300;
-          letter-spacing: -0.01em;
-        }
-        .dw-tagline strong {
-          font-weight: 700;
-          display: block;
-        }
-        .dw-cta-row {
-          position: absolute;
-          left: 45.6%;
-          right: -1vw;
-          top: 88.7%;
-          transform: translateY(-50%);
-          display: flex;
-          align-items: center;
-        }
-        .dw-cta {
-          flex: none;
-          padding: 0 15px;
-          height: 48px;
-          display: inline-flex;
-          align-items: center;
-          border: 1.5px solid rgba(255, 255, 255, .85);
-          border-radius: 6px;
-          background: rgba(0, 0, 0, .15);
-          color: #fff;
-          font-size: 14px;
-          font-weight: 400;
-          text-decoration: none;
-          cursor: pointer;
-          transition: background .25s, color .25s;
-          backdrop-filter: blur(4px);
-          -webkit-backdrop-filter: blur(4px);
-        }
-        .dw-cta:hover {
-          background: #fff;
-          color: #000;
-        }
-        .dw-cta-line {
-          flex: 1;
-          height: 1.5px;
-          background: rgba(255, 255, 255, .8);
-          min-width: 40px;
-        }
-        .dw-count {
-          flex: none;
-          font-size: clamp(140px, 19.8vw, 360px);
-          font-weight: 400;
-          line-height: 1;
-          letter-spacing: -0.02em;
-          color: transparent;
-          -webkit-text-stroke: 1.5px rgba(255, 255, 255, .9);
-          transform: translateY(6%);
-          user-select: none;
-          pointer-events: none;
-        }
-        .dw-loader {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          font-size: 12px;
-          letter-spacing: .2em;
-          text-transform: uppercase;
-          opacity: .6;
-          transition: opacity .6s;
-          pointer-events: none;
-        }
-        .dw-loader.done {
-          opacity: 0;
-        }
-        @media (max-width: 900px), (max-aspect-ratio: 1/1) {
-          .dw-arrows {
-            left: auto;
-            right: var(--pad-x);
-            top: 15%;
-            transform: translateY(-50%);
-            gap: 14px;
-          }
-          .dw-tagline {
-            bottom: clamp(150px, 20vh, 220px);
-          }
-          .dw-cta-row {
-            left: var(--pad-x);
-            right: -3vw;
-            top: auto;
-            bottom: 24px;
-            transform: none;
-          }
-          .dw-count {
-            font-size: clamp(120px, 22vw, 200px);
-          }
-        }
-        @media (max-width: 640px) {
-          .dw-nav-links { gap: 16px; }
-          .dw-nav-links a, .dw-logo { font-size: 13px; }
-          .dw-dots { gap: 20px; right: 16px; }
-          .dw-dot { width: 10px; height: 10px; }
-          .dw-cta-row { right: -8vw; }
-          .dw-count { font-size: 120px; }
-        }
-        @media (max-width: 420px) {
-          .dw-nav-links li:nth-child(2) { display: none; }
-        }
-      `}</style>
+  const scrollToNextSection = () => {
+    const nextSec = document.getElementById("dual-engine");
+    if (nextSec) {
+      nextSec.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
+  return (
+    <section className="dw-hero select-none relative" id="hero">
       <canvas ref={canvasRef} className="dw-scene" aria-label="Rotatable glass cube. Drag to rotate." />
 
       <div className="dw-ui">
         <h1 className="dw-sr-only">Explore New Ideas</h1>
-        <header className="dw-nav">
+
+        <motion.header
+          className="dw-nav"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <Link href="/" className="dw-logo">
             <i className="dw-logo-mark" />
             <b>Design</b>
@@ -842,9 +598,14 @@ export function DesignWorldHero() {
             <li><Link href="/work">Portfolio</Link></li>
             <li><Link href="/contact">Contact Us</Link></li>
           </ul>
-        </header>
+        </motion.header>
 
-        <div className="dw-arrows">
+        <motion.div
+          className="dw-arrows"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        >
           <button
             type="button"
             className="dw-arrow"
@@ -867,9 +628,15 @@ export function DesignWorldHero() {
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </button>
-        </div>
+        </motion.div>
 
-        <nav className="dw-dots" aria-label="Pagination">
+        <motion.nav
+          className="dw-dots"
+          aria-label="Pagination"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        >
           {[0, 1, 2].map((idx) => (
             <button
               key={idx}
@@ -879,14 +646,24 @@ export function DesignWorldHero() {
               onClick={() => setActiveDot(idx)}
             />
           ))}
-        </nav>
+        </motion.nav>
 
-        <p className="dw-tagline">
+        <motion.p
+          className="dw-tagline"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        >
           Let&apos;s Build the<br />
           Future of <strong>Design.</strong>
-        </p>
+        </motion.p>
 
-        <div className="dw-cta-row">
+        <motion.div
+          className="dw-cta-row"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        >
           <Link href="/work" className="dw-cta">
             Explore Now
           </Link>
@@ -894,7 +671,25 @@ export function DesignWorldHero() {
           <span className="dw-count" aria-hidden="true">
             07
           </span>
-        </div>
+        </motion.div>
+
+        {/* Floating Scroll Down Indicator */}
+        <motion.button
+          type="button"
+          onClick={scrollToNextSection}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 pointer-events-auto flex items-center gap-2 text-xs uppercase tracking-widest text-white/50 hover:text-white transition-colors duration-300 py-2 px-4 rounded-full border border-white/10 bg-black/40 backdrop-blur-md"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <span>Scroll to explore</span>
+          <motion.span
+            animate={{ y: [0, 4, 0] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ChevronDown size={14} />
+          </motion.span>
+        </motion.button>
 
         <div className={`dw-loader ${loaderDone ? "done" : ""}`}>
           Loading model
